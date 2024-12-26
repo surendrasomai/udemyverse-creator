@@ -1,9 +1,27 @@
 import { Search, ShoppingCart, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 export const Navbar = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      toast.success("Logged out successfully");
+      navigate("/");
+    } catch (error) {
+      toast.error("Error logging out");
+      console.error("Error:", error);
+    }
+  };
+
   return (
     <nav className="border-b bg-white">
       <div className="container mx-auto px-4 py-3">
@@ -28,10 +46,24 @@ export const Navbar = () => {
               <ShoppingCart className="h-5 w-5" />
             </Button>
             
-            <div className="flex gap-2">
-              <Button variant="outline">Log in</Button>
-              <Button className="bg-udemy-secondary hover:bg-udemy-secondary/90">Sign up</Button>
-            </div>
+            {user ? (
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => navigate("/dashboard")}>
+                  Dashboard
+                </Button>
+                <Button onClick={handleLogout}>Log out</Button>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => navigate("/login")}>Log in</Button>
+                <Button 
+                  className="bg-udemy-secondary hover:bg-udemy-secondary/90"
+                  onClick={() => navigate("/register")}
+                >
+                  Sign up
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
