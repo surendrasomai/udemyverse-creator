@@ -15,6 +15,10 @@ interface Course {
   image: string;
 }
 
+interface EnrollmentWithCourse {
+  courses: Course;
+}
+
 const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -29,6 +33,7 @@ const Dashboard = () => {
 
     const fetchEnrolledCourses = async () => {
       try {
+        console.log("Fetching enrolled courses for user:", user.id);
         const { data, error } = await supabase
           .from("enrollments")
           .select(`
@@ -43,10 +48,19 @@ const Dashboard = () => {
           `)
           .eq("user_id", user.id);
 
-        if (error) throw error;
+        if (error) {
+          console.error("Supabase error:", error);
+          throw error;
+        }
+
+        console.log("Raw data from Supabase:", data);
 
         // Transform the data to match the Course interface
-        const courses = data?.map(enrollment => enrollment.courses as Course).filter(Boolean) || [];
+        const courses = (data as EnrollmentWithCourse[])
+          .map(enrollment => enrollment.courses)
+          .filter((course): course is Course => course !== null);
+
+        console.log("Transformed courses:", courses);
         setEnrolledCourses(courses);
       } catch (error) {
         console.error("Error fetching enrolled courses:", error);
