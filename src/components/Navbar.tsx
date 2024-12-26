@@ -28,7 +28,7 @@ export const Navbar = () => {
     <nav className="border-b bg-white">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
-          <Link to="/" className="text-2xl font-bold text-udemy-primary">
+          <Link to="/" className="text-2xl font-bold text-primary">
             Learnify
           </Link>
           
@@ -71,12 +71,7 @@ export const Navbar = () => {
             ) : (
               <div className="flex gap-2">
                 <Button variant="outline" onClick={() => navigate("/login")}>Log in</Button>
-                <Button 
-                  className="bg-udemy-secondary hover:bg-udemy-secondary/90"
-                  onClick={() => navigate("/register")}
-                >
-                  Sign up
-                </Button>
+                <Button onClick={() => navigate("/register")}>Sign up</Button>
               </div>
             )}
           </div>
