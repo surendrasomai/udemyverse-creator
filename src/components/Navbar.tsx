@@ -1,13 +1,15 @@
-import { Search, ShoppingCart, User } from "lucide-react";
+import { Search, ShoppingCart, User, BookOpen, Users, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRole } from "@/contexts/RoleContext";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 
 export const Navbar = () => {
   const { user } = useAuth();
+  const { role, isEducator, isAdmin, isSuperAdmin } = useRole();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -48,7 +50,20 @@ export const Navbar = () => {
             
             {user ? (
               <div className="flex gap-2">
+                {isEducator && (
+                  <Button variant="outline" onClick={() => navigate("/educator/dashboard")}>
+                    <BookOpen className="mr-2 h-4 w-4" />
+                    Educator Dashboard
+                  </Button>
+                )}
+                {(isAdmin || isSuperAdmin) && (
+                  <Button variant="outline" onClick={() => navigate("/admin/dashboard")}>
+                    <Settings className="mr-2 h-4 w-4" />
+                    Admin Panel
+                  </Button>
+                )}
                 <Button variant="outline" onClick={() => navigate("/dashboard")}>
+                  <User className="mr-2 h-4 w-4" />
                   Dashboard
                 </Button>
                 <Button onClick={handleLogout}>Log out</Button>
