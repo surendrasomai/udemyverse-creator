@@ -45,11 +45,8 @@ const Dashboard = () => {
 
         if (error) throw error;
 
-        // Properly map the data to match the Course interface
-        const courses: Course[] = data
-          .map(enrollment => enrollment.courses)
-          .filter(course => course !== null);
-
+        // Transform the data to match the Course interface
+        const courses = data?.map(enrollment => enrollment.courses as Course).filter(Boolean) || [];
         setEnrolledCourses(courses);
       } catch (error) {
         console.error("Error fetching enrolled courses:", error);
