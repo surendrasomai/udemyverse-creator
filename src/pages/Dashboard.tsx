@@ -32,7 +32,6 @@ const Dashboard = () => {
         const { data, error } = await supabase
           .from("enrollments")
           .select(`
-            course_id,
             courses (
               id,
               title,
@@ -46,7 +45,11 @@ const Dashboard = () => {
 
         if (error) throw error;
 
-        const courses = data.map((enrollment) => enrollment.courses);
+        // Properly map the data to match the Course interface
+        const courses: Course[] = data
+          .map(enrollment => enrollment.courses)
+          .filter(course => course !== null);
+
         setEnrolledCourses(courses);
       } catch (error) {
         console.error("Error fetching enrolled courses:", error);
@@ -58,6 +61,10 @@ const Dashboard = () => {
 
     fetchEnrolledCourses();
   }, [user, navigate]);
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
